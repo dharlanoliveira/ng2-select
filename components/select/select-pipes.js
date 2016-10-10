@@ -4,8 +4,8 @@ var common_1 = require('./common');
 var HighlightPipe = (function () {
     function HighlightPipe() {
     }
-    HighlightPipe.prototype.transform = function (safeHtml, query) {
-        var value = safeHtml.changingThisBreaksApplicationSecurity;
+    HighlightPipe.prototype.transform = function (value, query) {
+        value = value.changingThisBreaksApplicationSecurity || value;
         if (query.length < 1) {
             return value;
         }

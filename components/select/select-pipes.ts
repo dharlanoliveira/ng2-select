@@ -3,8 +3,8 @@ import { escapeRegexp } from './common';
 
 @Pipe({name: 'highlight'})
 export class HighlightPipe implements PipeTransform {
-  public transform(safeHtml:any, query:string):any {
-    var value = safeHtml.changingThisBreaksApplicationSecurity;
+  public transform(value:any, query:string):any {
+    value = value.changingThisBreaksApplicationSecurity || value;
     if (query.length < 1) {
       return value;
     }
