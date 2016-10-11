@@ -141,8 +141,8 @@ let styles = `
           <div class="ui-select-choices-row"
                [class.active]="isActive(o)"
                (mouseenter)="selectActive(o)">
-            <a (click)="selectMatch(o, $event)" class="dropdown-item">
-              <div [innerHtml]="sanitize(o.text | highlight:inputValue)"></div>
+            <a href="javascript:void(0)" (click)="selectMatch(o, $event)" class="dropdown-item">
+              <div (click)="selectMatch(o, $event)" [innerHtml]="sanitize(o.text | highlight:inputValue)"></div>
             </a>
           </div>
         </li>
@@ -160,8 +160,8 @@ let styles = `
                (mouseenter)="selectActive(o)"
                (click)="selectMatch(o, $event)"
                [ngClass]="{'active': isActive(o)}">
-            <a href="javascript:void(0)" class="dropdown-item">
-              <div [innerHtml]="sanitize(o.text | highlight:inputValue)"></div>
+            <a href="javascript:void(0)" (click)="selectMatch(o, $event)" class="dropdown-item">
+              <div (click)="selectMatch(o, $event)" [innerHtml]="sanitize(o.text | highlight:inputValue)"></div>
             </a>
           </div>
         </li>
@@ -207,8 +207,8 @@ let styles = `
                [class.active]="isActive(o)"
                (mouseenter)="selectActive(o)"
                (click)="selectMatch(o, $event)">
-            <a href="javascript:void(0)" class="dropdown-item">
-              <div [innerHtml]="sanitize(o.text | highlight:inputValue)"></div>
+            <a href="javascript:void(0)" (click)="selectMatch(o, $event)" class="dropdown-item">
+              <div (click)="selectMatch(o, $event)" [innerHtml]="sanitize(o.text | highlight:inputValue)"></div>
             </a>
           </div>
         </li>
