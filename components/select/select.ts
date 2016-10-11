@@ -140,9 +140,8 @@ let styles = `
         <li *ngFor="let o of options" role="menuitem">
           <div class="ui-select-choices-row"
                [class.active]="isActive(o)"
-               (mouseenter)="selectActive(o)"
-               (click)="selectMatch(o, $event)">
-            <a href="javascript:void(0)" class="dropdown-item">
+               (mouseenter)="selectActive(o)">
+            <a (click)="selectMatch(o, $event)" class="dropdown-item">
               <div [innerHtml]="sanitize(o.text | highlight:inputValue)"></div>
             </a>
           </div>
