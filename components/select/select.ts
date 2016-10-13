@@ -143,7 +143,9 @@ let styles = `
                (mouseenter)="selectActive(o)"
                (click)="selectMatch(o, $event)">
             <a href="javascript:void(0)" class="dropdown-item">
-              <div [innerHtml]="sanitize(o.text | highlight:inputValue)"></div>
+              <div>
+              {{sanitize(o.text | highlight:inputValue)}}
+              </div>
             </a>
           </div>
         </li>
@@ -162,7 +164,9 @@ let styles = `
                (click)="selectMatch(o, $event)"
                [ngClass]="{'active': isActive(o)}">
             <a href="javascript:void(0)" class="dropdown-item">
-              <div [innerHtml]="sanitize(o.text | highlight:inputValue)"></div>
+              <div>
+              {{sanitize(o.text | highlight:inputValue)}}
+              </div>
             </a>
           </div>
         </li>
@@ -209,7 +213,9 @@ let styles = `
                (mouseenter)="selectActive(o)"
                (click)="selectMatch(o, $event)">
             <a href="javascript:void(0)" class="dropdown-item">
-              <div [innerHtml]="sanitize(o.text | highlight:inputValue)"></div>
+              <div>
+              {{sanitize(o.text | highlight:inputValue)}}
+              </div>
             </a>
           </div>
         </li>
@@ -228,7 +234,9 @@ let styles = `
                (click)="selectMatch(o, $event)"
                [ngClass]="{'active': isActive(o)}">
             <a href="javascript:void(0)" class="dropdown-item">
-              <div [innerHtml]="sanitize(o.text | highlight:inputValue)"></div>
+              <div>
+              {{sanitize(o.text | highlight:inputValue)}}
+              </div>
             </a>
           </div>
         </li>
