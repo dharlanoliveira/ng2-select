@@ -1,9 +1,9 @@
-import { Component, Input, Output, EventEmitter, ElementRef, OnInit } from '@angular/core';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { SelectItem } from './select-item';
-import { stripTags } from './select-pipes';
-import { OptionsBehavior } from './select-interfaces';
-import { escapeRegexp } from './common';
+import {Component, Input, Output, EventEmitter, ElementRef, OnInit} from '@angular/core';
+import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
+import {SelectItem} from './select-item';
+import {stripTags} from './select-pipes';
+import {OptionsBehavior} from './select-interfaces';
+import {escapeRegexp} from './common';
 
 let styles = `
   .ui-select-toggle {
@@ -140,9 +140,10 @@ let styles = `
         <li *ngFor="let o of options" role="menuitem">
           <div class="ui-select-choices-row"
                [class.active]="isActive(o)"
-               (mouseenter)="selectActive(o)">
-            <a (click)="selectMatch(o, $event)" class="dropdown-item">
-              <div (click)="selectMatch(o, $event)" [innerHtml]="sanitize(o.text | highlight:inputValue)"></div>
+               (mouseenter)="selectActive(o)"
+               (click)="selectMatch(o, $event)">
+            <a href="javascript:void(0)" class="dropdown-item">
+              <div [innerHtml]="sanitize(o.text | highlight:inputValue)"></div>
             </a>
           </div>
         </li>
@@ -160,8 +161,8 @@ let styles = `
                (mouseenter)="selectActive(o)"
                (click)="selectMatch(o, $event)"
                [ngClass]="{'active': isActive(o)}">
-            <a (click)="selectMatch(o, $event)" class="dropdown-item">
-              <div (click)="selectMatch(o, $event)" [innerHtml]="sanitize(o.text | highlight:inputValue)"></div>
+            <a href="javascript:void(0)" class="dropdown-item">
+              <div [innerHtml]="sanitize(o.text | highlight:inputValue)"></div>
             </a>
           </div>
         </li>
@@ -207,8 +208,8 @@ let styles = `
                [class.active]="isActive(o)"
                (mouseenter)="selectActive(o)"
                (click)="selectMatch(o, $event)">
-            <a (click)="selectMatch(o, $event)" class="dropdown-item">
-              <div (click)="selectMatch(o, $event)" [innerHtml]="sanitize(o.text | highlight:inputValue)"></div>
+            <a href="javascript:void(0)" class="dropdown-item">
+              <div [innerHtml]="sanitize(o.text | highlight:inputValue)"></div>
             </a>
           </div>
         </li>
@@ -226,8 +227,8 @@ let styles = `
                (mouseenter)="selectActive(o)"
                (click)="selectMatch(o, $event)"
                [ngClass]="{'active': isActive(o)}">
-            <a (click)="selectMatch(o, $event)" class="dropdown-item">
-              <div (click)="selectMatch(o, $event)" [innerHtml]="sanitize(o.text | highlight:inputValue)"></div>
+            <a href="javascript:void(0)" class="dropdown-item">
+              <div [innerHtml]="sanitize(o.text | highlight:inputValue)"></div>
             </a>
           </div>
         </li>
@@ -236,48 +237,48 @@ let styles = `
   `
 })
 export class SelectComponent implements OnInit {
-  @Input() public allowClear:boolean = false;
-  @Input() public placeholder:string = '';
-  @Input() public idField:string = 'id';
-  @Input() public textField:string = 'text';
-  @Input() public multiple:boolean = false;
+  @Input() public allowClear: boolean = false;
+  @Input() public placeholder: string = '';
+  @Input() public idField: string = 'id';
+  @Input() public textField: string = 'text';
+  @Input() public multiple: boolean = false;
 
   @Input()
-  public set items(value:Array<any>) {
+  public set items(value: Array<any>) {
     if (!value) {
       this._items = this.itemObjects = [];
     } else {
-      this._items = value.filter((item:any) => {
+      this._items = value.filter((item: any) => {
         // if ((typeof item === 'string' && item) || (typeof item === 'object' && item && item.text && item.id)) {
         if ((typeof item === 'string') || (typeof item === 'object' && item.text)) {
           return item;
         }
       });
       // this.itemObjects = this._items.map((item:any) => (typeof item === 'string' ? new SelectItem(item) : new SelectItem({id: item[this.idField], text: item[this.textField]})));
-      this.itemObjects = this._items.map((item:any) => new SelectItem(item));
+      this.itemObjects = this._items.map((item: any) => new SelectItem(item));
     }
   }
 
   @Input()
-  public set disabled(value:boolean) {
+  public set disabled(value: boolean) {
     this._disabled = value;
     if (this._disabled === true) {
       this.hideOptions();
     }
   }
 
-  public get disabled():boolean {
+  public get disabled(): boolean {
     return this._disabled;
   }
 
   @Input()
-  public set active(selectedItems:Array<any>) {
+  public set active(selectedItems: Array<any>) {
     if (!selectedItems || selectedItems.length === 0) {
       this._active = [];
     } else {
       let areItemsStrings = typeof selectedItems[0] === 'string';
 
-      this._active = selectedItems.map((item:any) => {
+      this._active = selectedItems.map((item: any) => {
         let data = areItemsStrings
           ? item
           : {id: item[this.idField], text: item[this.textField]};
@@ -287,38 +288,38 @@ export class SelectComponent implements OnInit {
     }
   }
 
-  @Output() public data:EventEmitter<any> = new EventEmitter();
-  @Output() public selected:EventEmitter<any> = new EventEmitter();
-  @Output() public removed:EventEmitter<any> = new EventEmitter();
-  @Output() public typed:EventEmitter<any> = new EventEmitter();
+  @Output() public data: EventEmitter<any> = new EventEmitter();
+  @Output() public selected: EventEmitter<any> = new EventEmitter();
+  @Output() public removed: EventEmitter<any> = new EventEmitter();
+  @Output() public typed: EventEmitter<any> = new EventEmitter();
 
-  public options:Array<SelectItem> = [];
-  public itemObjects:Array<SelectItem> = [];
-  public activeOption:SelectItem;
-  public element:ElementRef;
+  public options: Array<SelectItem> = [];
+  public itemObjects: Array<SelectItem> = [];
+  public activeOption: SelectItem;
+  public element: ElementRef;
 
-  public get active():Array<any> {
+  public get active(): Array<any> {
     return this._active;
   }
 
-  private inputMode:boolean = false;
-  private optionsOpened:boolean = false;
-  private behavior:OptionsBehavior;
-  private inputValue:string = '';
-  private _items:Array<any> = [];
-  private _disabled:boolean = false;
-  private _active:Array<SelectItem> = [];
+  private inputMode: boolean = false;
+  private optionsOpened: boolean = false;
+  private behavior: OptionsBehavior;
+  private inputValue: string = '';
+  private _items: Array<any> = [];
+  private _disabled: boolean = false;
+  private _active: Array<SelectItem> = [];
 
-  public constructor(element:ElementRef, private sanitizer:DomSanitizer) {
+  public constructor(element: ElementRef, private sanitizer: DomSanitizer) {
     this.element = element;
     this.clickedOutside = this.clickedOutside.bind(this);
   }
 
-  public sanitize(html:string):SafeHtml {
+  public sanitize(html: string): SafeHtml {
     return this.sanitizer.bypassSecurityTrustHtml(html);
   }
 
-  public inputEvent(e:any, isUpMode:boolean = false):void {
+  public inputEvent(e: any, isUpMode: boolean = false): void {
     // tab
     if (e.keyCode === 9) {
       return;
@@ -330,7 +331,7 @@ export class SelectComponent implements OnInit {
     }
     // backspace
     if (!isUpMode && e.keyCode === 8) {
-      let el:any = this.element.nativeElement
+      let el: any = this.element.nativeElement
         .querySelector('div.ui-select-container > input');
       if (!el.value || el.value.length <= 0) {
         if (this.active.length > 0) {
@@ -394,12 +395,12 @@ export class SelectComponent implements OnInit {
     }
   }
 
-  public ngOnInit():any {
+  public ngOnInit(): any {
     this.behavior = (this.firstItemHasChildren) ?
       new ChildrenBehavior(this) : new GenericBehavior(this);
   }
 
-  public remove(item:SelectItem):void {
+  public remove(item: SelectItem): void {
     if (this._disabled === true) {
       return;
     }
@@ -416,22 +417,22 @@ export class SelectComponent implements OnInit {
     }
   }
 
-  public doEvent(type:string, value:any):void {
+  public doEvent(type: string, value: any): void {
     if ((this as any)[type] && value) {
       (this as any)[type].next(value);
     }
   }
 
-  public clickedOutside():void {
+  public clickedOutside(): void {
     this.inputMode = false;
     this.optionsOpened = false;
   }
 
-  public get firstItemHasChildren():boolean {
+  public get firstItemHasChildren(): boolean {
     return this.itemObjects[0] && this.itemObjects[0].hasChildren();
   }
 
-  protected matchClick(e:any):void {
+  protected matchClick(e: any): void {
     if (this._disabled === true) {
       return;
     }
@@ -442,7 +443,7 @@ export class SelectComponent implements OnInit {
     }
   }
 
-  protected  mainClick(event:any):void {
+  protected  mainClick(event: any): void {
     if (this.inputMode === true || this._disabled === true) {
       return;
     }
@@ -472,15 +473,15 @@ export class SelectComponent implements OnInit {
     this.inputEvent(event);
   }
 
-  protected  selectActive(value:SelectItem):void {
+  protected  selectActive(value: SelectItem): void {
     this.activeOption = value;
   }
 
-  protected  isActive(value:SelectItem):boolean {
+  protected  isActive(value: SelectItem): boolean {
     return this.activeOption.text === value.text;
   }
 
-  private focusToInput(value:string = ''):void {
+  private focusToInput(value: string = ''): void {
     setTimeout(() => {
       let el = this.element.nativeElement.querySelector('div.ui-select-container > input');
       if (el) {
@@ -490,10 +491,10 @@ export class SelectComponent implements OnInit {
     }, 0);
   }
 
-  private open():void {
+  private open(): void {
     this.options = this.itemObjects
-      .filter((option:SelectItem) => (this.multiple === false ||
-      this.multiple === true && !this.active.find((o:SelectItem) => option.text === o.text)));
+      .filter((option: SelectItem) => (this.multiple === false ||
+      this.multiple === true && !this.active.find((o: SelectItem) => option.text === o.text)));
 
     if (this.options.length > 0) {
       this.behavior.first();
@@ -501,16 +502,16 @@ export class SelectComponent implements OnInit {
     this.optionsOpened = true;
   }
 
-  private hideOptions():void {
+  private hideOptions(): void {
     this.inputMode = false;
     this.optionsOpened = false;
   }
 
-  private selectActiveMatch():void {
+  private selectActiveMatch(): void {
     this.selectMatch(this.activeOption);
   }
 
-  private selectMatch(value:SelectItem, e:Event = void 0):void {
+  private selectMatch(value: SelectItem, e: Event = void 0): void {
     if (e) {
       e.stopPropagation();
       e.preventDefault();
@@ -538,24 +539,24 @@ export class SelectComponent implements OnInit {
 }
 
 export class Behavior {
-  public optionsMap:Map<string, number> = new Map<string, number>();
+  public optionsMap: Map<string, number> = new Map<string, number>();
 
-  public actor:SelectComponent;
+  public actor: SelectComponent;
 
-  public constructor(actor:SelectComponent) {
+  public constructor(actor: SelectComponent) {
     this.actor = actor;
   }
 
-  public fillOptionsMap():void {
+  public fillOptionsMap(): void {
     this.optionsMap.clear();
     let startPos = 0;
     this.actor.itemObjects
-      .map((item:SelectItem) => {
+      .map((item: SelectItem) => {
         startPos = item.fillChildrenHash(this.optionsMap, startPos);
       });
   }
 
-  public ensureHighlightVisible(optionsMap:Map<string, number> = void 0):void {
+  public ensureHighlightVisible(optionsMap: Map<string, number> = void 0): void {
     let container = this.actor.element.nativeElement.querySelector('.ui-select-choices-content');
     if (!container) {
       return;
@@ -568,12 +569,12 @@ export class Behavior {
     if (activeIndex < 0) {
       return;
     }
-    let highlighted:any = choices[activeIndex];
+    let highlighted: any = choices[activeIndex];
     if (!highlighted) {
       return;
     }
-    let posY:number = highlighted.offsetTop + highlighted.clientHeight - container.scrollTop;
-    let height:number = container.offsetHeight;
+    let posY: number = highlighted.offsetTop + highlighted.clientHeight - container.scrollTop;
+    let height: number = container.offsetHeight;
     if (posY > height) {
       container.scrollTop += posY - height;
     } else if (posY < highlighted.clientHeight) {
@@ -581,7 +582,7 @@ export class Behavior {
     }
   }
 
-  private getActiveIndex(optionsMap:Map<string, number> = void 0):number {
+  private getActiveIndex(optionsMap: Map<string, number> = void 0): number {
     let ai = this.actor.options.indexOf(this.actor.activeOption);
     if (ai < 0 && optionsMap !== void 0) {
       ai = optionsMap.get(this.actor.activeOption.id);
@@ -591,40 +592,40 @@ export class Behavior {
 }
 
 export class GenericBehavior extends Behavior implements OptionsBehavior {
-  public constructor(actor:SelectComponent) {
+  public constructor(actor: SelectComponent) {
     super(actor);
   }
 
-  public first():void {
+  public first(): void {
     this.actor.activeOption = this.actor.options[0];
     super.ensureHighlightVisible();
   }
 
-  public last():void {
+  public last(): void {
     this.actor.activeOption = this.actor.options[this.actor.options.length - 1];
     super.ensureHighlightVisible();
   }
 
-  public prev():void {
+  public prev(): void {
     let index = this.actor.options.indexOf(this.actor.activeOption);
     this.actor.activeOption = this.actor
       .options[index - 1 < 0 ? this.actor.options.length - 1 : index - 1];
     super.ensureHighlightVisible();
   }
 
-  public next():void {
+  public next(): void {
     let index = this.actor.options.indexOf(this.actor.activeOption);
     this.actor.activeOption = this.actor
       .options[index + 1 > this.actor.options.length - 1 ? 0 : index + 1];
     super.ensureHighlightVisible();
   }
 
-  public filter(query:RegExp):void {
+  public filter(query: RegExp): void {
     let options = this.actor.itemObjects
-      .filter((option:SelectItem) => {
+      .filter((option: SelectItem) => {
         return stripTags(option.text).match(query) &&
           (this.actor.multiple === false ||
-          (this.actor.multiple === true && this.actor.active.map((item:SelectItem) => item.id).indexOf(option.id) < 0));
+          (this.actor.multiple === true && this.actor.active.map((item: SelectItem) => item.id).indexOf(option.id) < 0));
       });
     this.actor.options = options;
     if (this.actor.options.length > 0) {
@@ -635,17 +636,17 @@ export class GenericBehavior extends Behavior implements OptionsBehavior {
 }
 
 export class ChildrenBehavior extends Behavior implements OptionsBehavior {
-  public constructor(actor:SelectComponent) {
+  public constructor(actor: SelectComponent) {
     super(actor);
   }
 
-  public first():void {
+  public first(): void {
     this.actor.activeOption = this.actor.options[0].children[0];
     this.fillOptionsMap();
     this.ensureHighlightVisible(this.optionsMap);
   }
 
-  public last():void {
+  public last(): void {
     this.actor.activeOption =
       this.actor
         .options[this.actor.options.length - 1]
@@ -654,11 +655,11 @@ export class ChildrenBehavior extends Behavior implements OptionsBehavior {
     this.ensureHighlightVisible(this.optionsMap);
   }
 
-  public prev():void {
+  public prev(): void {
     let indexParent = this.actor.options
-      .findIndex((option:SelectItem) => this.actor.activeOption.parent && this.actor.activeOption.parent.id === option.id);
+      .findIndex((option: SelectItem) => this.actor.activeOption.parent && this.actor.activeOption.parent.id === option.id);
     let index = this.actor.options[indexParent].children
-      .findIndex((option:SelectItem) => this.actor.activeOption && this.actor.activeOption.id === option.id);
+      .findIndex((option: SelectItem) => this.actor.activeOption && this.actor.activeOption.id === option.id);
     this.actor.activeOption = this.actor.options[indexParent].children[index - 1];
     if (!this.actor.activeOption) {
       if (this.actor.options[indexParent - 1]) {
@@ -674,11 +675,11 @@ export class ChildrenBehavior extends Behavior implements OptionsBehavior {
     this.ensureHighlightVisible(this.optionsMap);
   }
 
-  public next():void {
+  public next(): void {
     let indexParent = this.actor.options
-      .findIndex((option:SelectItem) => this.actor.activeOption.parent && this.actor.activeOption.parent.id === option.id);
+      .findIndex((option: SelectItem) => this.actor.activeOption.parent && this.actor.activeOption.parent.id === option.id);
     let index = this.actor.options[indexParent].children
-      .findIndex((option:SelectItem) => this.actor.activeOption && this.actor.activeOption.id === option.id);
+      .findIndex((option: SelectItem) => this.actor.activeOption && this.actor.activeOption.id === option.id);
     this.actor.activeOption = this.actor.options[indexParent].children[index + 1];
     if (!this.actor.activeOption) {
       if (this.actor.options[indexParent + 1]) {
@@ -692,12 +693,12 @@ export class ChildrenBehavior extends Behavior implements OptionsBehavior {
     this.ensureHighlightVisible(this.optionsMap);
   }
 
-  public filter(query:RegExp):void {
-    let options:Array<SelectItem> = [];
-    let optionsMap:Map<string, number> = new Map<string, number>();
+  public filter(query: RegExp): void {
+    let options: Array<SelectItem> = [];
+    let optionsMap: Map<string, number> = new Map<string, number>();
     let startPos = 0;
     for (let si of this.actor.itemObjects) {
-      let children:Array<SelectItem> = si.children.filter((option:SelectItem) => query.test(option.text));
+      let children: Array<SelectItem> = si.children.filter((option: SelectItem) => query.test(option.text));
       startPos = si.fillChildrenHash(optionsMap, startPos);
       if (children.length > 0) {
         let newSi = si.getSimilar();
